@@ -1,16 +1,14 @@
-import React, { useState } from "react";
-import { Box, useTheme } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { useGetActionsQuery } from "state/api";
-import Header from "components/Header";
-import DataGridCustomToolbar from "components/DataGridCustomToolbar";
-
+import * as React from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
   GridRowModes,
+  DataGrid,
   GridToolbarContainer,
   GridActionsCellItem,
   GridRowEditStopReasons,
@@ -20,23 +18,47 @@ import {
   randomTraderName,
   randomId,
 } from "@mui/x-data-grid-generator";
+import { useGetCustomersQuery } from "state/api";
 
-const Actions = () => {
-  const theme = useTheme();
+function EditToolbar(props) {
+  const { setRows, setRowModesModel } = props;
 
-  // values to be sent to the backend
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
-  const [sort, setSort] = useState({});
-  const [search, setSearch] = useState("");
+  const handleClick = () => {
+    const id = randomId();
+    setRows((oldRows) => [
+      ...oldRows,
+      {
+        _id: id,
+        request_num: "",
+        account_num: "",
+        Address: "",
+        affiliation: "",
+        market_segment: "",
+        Internal_responsible: "",
+        company_interlocutor: "",
+        Activity_indicator: "",
+        Comment_CA: "",
+        role: "",
+        isNew: true,
+      },
+    ]);
+    setRowModesModel((oldModel) => ({
+      ...oldModel,
+      [id]: { mode: GridRowModes.Edit, fieldToFocus: "name" },
+    }));
+  };
 
-  const [searchInput, setSearchInput] = useState("");
-  const { data, isLoading } = useGetActionsQuery({
-    page,
-    pageSize,
-    sort: JSON.stringify(sort),
-    search,
-  });
+  return (
+    <GridToolbarContainer>
+      <Button color="primary" startIcon={<AddIcon />} onClick={handleClick}>
+        Add record
+      </Button>
+    </GridToolbarContainer>
+  );
+}
+
+export default function FullFeaturedCrudGrid() {
+  const { data, isLoading } = useGetCustomersQuery();
 
   const [rows, setRows] = React.useState([]);
 
@@ -45,6 +67,7 @@ const Actions = () => {
       setRows(data);
     }
   }, [data]);
+
   const [rowModesModel, setRowModesModel] = React.useState({});
 
   const handleRowEditStop = (params, event) => {
@@ -92,24 +115,67 @@ const Actions = () => {
       field: "_id",
       headerName: "ID",
       flex: 1,
+      editable: true,
     },
     {
-      field: "userId",
-      headerName: "User ID",
-      flex: 1,
-    },
-    {
-      field: "actionType",
-      headerName: "Action Type",
+      field: "request_num",
+      headerName: "Request Number",
       flex: 1,
       editable: true,
     },
     {
-      field: "comments",
-      headerName: "Comments",
+      field: "account_num",
+      headerName: "Account Number",
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "Address",
+      headerName: "Address",
+      flex: 2,
+      editable: true,
+    },
+    {
+      field: "affiliation",
+      headerName: "Affiliation",
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "market_segment",
+      headerName: "Market Segment",
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "Internal_responsible",
+      headerName: "Internal Responsible",
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "company_interlocutor",
+      headerName: "Company Interlocutor",
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "Activity_indicator",
+      headerName: "Activity Indicator",
+      type: "number",
       flex: 0.5,
-      sortable: false,
       editable: true,
+    },
+    {
+      field: "Comment_CA",
+      headerName: "Comment",
+      flex: 2,
+      editable: true,
+    },
+    {
+      field: "role",
+      headerName: "Role",
+      flex: 0.5,
     },
     {
       field: "actions",
@@ -160,58 +226,34 @@ const Actions = () => {
   ];
 
   return (
-    <Box m="1.5rem 2.5rem">
-      <Header title="ACTIONS" subtitle="Entire list of actions" />
-      <Box
-        height="80vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "none",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderBottom: "none",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: theme.palette.primary.light,
-          },
-          "& .MuiDataGrid-footerContainer": {
-            backgroundColor: theme.palette.background.alt,
-            color: theme.palette.secondary[100],
-            borderTop: "none",
-          },
-          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
-            color: `${theme.palette.secondary[200]} !important`,
-          },
+    <Box
+      sx={{
+        height: 500,
+        width: "100%",
+        "& .actions": {
+          color: "text.secondary",
+        },
+        "& .textPrimary": {
+          color: "text.primary",
+        },
+      }}
+    >
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        getRowId={(row) => row._id}
+        editMode="row"
+        rowModesModel={rowModesModel}
+        onRowModesModelChange={handleRowModesModelChange}
+        onRowEditStop={handleRowEditStop}
+        processRowUpdate={processRowUpdate}
+        slots={{
+          toolbar: EditToolbar,
         }}
-      >
-        <DataGrid
-          loading={isLoading || !data}
-          getRowId={(row) => row._id}
-          rows={(data && data.actions) || []}
-          columns={columns}
-          rowCount={(data && data.total) || 0}
-          rowsPerPageOptions={[20, 50, 100]}
-          pagination
-          page={page}
-          pageSize={pageSize}
-          paginationMode="server"
-          sortingMode="server"
-          onPageChange={(newPage) => setPage(newPage)}
-          onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
-          onSortModelChange={(newSortModel) => setSort(...newSortModel)}
-          components={{ Toolbar: DataGridCustomToolbar }}
-          componentsProps={{
-            toolbar: { searchInput, setSearchInput, setSearch },
-          }}
-        />
-      </Box>
+        slotProps={{
+          toolbar: { setRows, setRowModesModel },
+        }}
+      />
     </Box>
   );
-};
-
-export default Actions;
+}

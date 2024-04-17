@@ -3,6 +3,24 @@ import { useState } from "react";
 import { Box, useTheme, Button } from "@mui/material";
 import { useGetCustomersQuery } from "state/api";
 import Header from "components/Header";
+import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/DeleteOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import CancelIcon from "@mui/icons-material/Close";
+import {
+  GridRowModes,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridRowEditStopReasons,
+} from "@mui/x-data-grid";
+import {
+  randomCreatedDate,
+  randomTraderName,
+  randomId,
+  randomArrayItem,
+} from "@mui/x-data-grid-generator";
+
 import { DataGrid } from "@mui/x-data-grid";
 
 const Customers = () => {
