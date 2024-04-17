@@ -73,6 +73,13 @@ getAdmins: build.query({
       }),
       invalidatesTags: ["Actions"],
     }),
+    deleteCustomer: build.mutation({
+      query: (id) => ({
+        url: `client/customers/remove/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Customers"],
+    }),
 //     getUserPerformance: build.query({
 //       query: (id) => `management/performance/${id}`,
 //       providesTags: ["Performance"],

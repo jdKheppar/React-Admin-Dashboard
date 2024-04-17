@@ -49,6 +49,27 @@ export const updateCustomer = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+export const removeCustomer = async (req, res) => {
+  const customerId = req.params.id; // Extract the customer ID from the request parameters
+
+  try {
+    // Find the customer by ID in the database
+    const customer = await Client.findById(customerId);
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    // Remove the customer from the database
+    await customer.remove();
+
+    // Return a success message in the response
+    res.status(200).json({ message: "Customer deleted successfully" });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 export const getActions = async (req, res) => {
   try {
     // sort should look like this: { "field": "userId", "sort": "desc"}

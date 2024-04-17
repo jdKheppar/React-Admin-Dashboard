@@ -1,11 +1,12 @@
 import express from "express";
-import { getCustomers, getActions, addCustomer, updateCustomer, updateAction } from "../controllers/client.js";
+import { getCustomers, getActions, addCustomer, updateCustomer, removeCustomer,updateAction } from "../controllers/client.js";
 
 const router = express.Router();
 
 router.get("/customers", getCustomers);
 router.get("/customers/add", addCustomer);
-router.get("/customers/update/:id", updateCustomer)
+router.put("/customers/update/:id", updateCustomer);
+router.delete("/customers/remove/:id",removeCustomer);
 router.get("/actions", getActions);
-router.get("/actions/update/:id", updateAction)
+router.put("/actions/update/:id", updateAction);
 export default router;
