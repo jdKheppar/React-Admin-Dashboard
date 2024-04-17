@@ -49,6 +49,30 @@ getAdmins: build.query({
        query: () => "management/admins",
        providesTags: ["Admins"],
      }),
+     addCustomer: build.mutation({
+      query: (customerObj) => ({
+        url: "client/customers/add",
+        method: "POST",
+        body: customerObj,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+    updateCustomer: build.mutation({
+      query: ({ id, updatedCustomerData }) => ({
+        url: `client/customers/update/${id}`,
+        method: "PUT",
+        body: updatedCustomerData,
+      }),
+      invalidatesTags: ["Customers"],
+    }),
+    updateAction: build.mutation({
+      query: ({ id, updatedActionData }) => ({
+        url: `client/actions/add/${id}`,
+        method: "PUT",
+        body: updatedActionData,
+      }),
+      invalidatesTags: ["Actions"],
+    }),
 //     getUserPerformance: build.query({
 //       query: (id) => `management/performance/${id}`,
 //       providesTags: ["Performance"],
