@@ -3,22 +3,27 @@ import mongoose from "mongoose";
 const OverallStatSchema = new mongoose.Schema(
   {
     totalCustomers: Number,
-    yearlyApprovalsTotal: Number,
+    yearlySalesTotal: Number,
+    yearlyTotalSoldUnits: Number,
     year: Number,
     monthlyData: [
       {
         month: String,
-        totalApprovals: Number,
-        totalRequests: Number,
+        totalSales: Number,
+        totalUnits: Number,
       },
     ],
     dailyData: [
       {
         date: String,
-        totalApprovals: Number,
-        totalRequests: Number,
+        totalSales: Number,
+        totalUnits: Number,
       },
     ],
+    salesByCategory: {
+      type: Map,
+      of: Number,
+    },
   },
   { timestamps: true }
 );

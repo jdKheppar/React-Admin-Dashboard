@@ -9,8 +9,9 @@ export const api = createApi({
     "Client",
     "Actions",
     "Admins",
+    "Sales",
     //     "Performance",
-    //     "Dashboard",
+    "Dashboard",
   ],
   endpoints: (build) => ({
     getUser: build.query({
@@ -84,10 +85,14 @@ export const api = createApi({
     //       query: (id) => `management/performance/${id}`,
     //       providesTags: ["Performance"],
     //     }),
-    //     getDashboard: build.query({
-    //       query: () => "general/dashboard",
-    //       providesTags: ["Dashboard"],
-    //     }),
+    getDashboard: build.query({
+      query: () => "general/dashboard",
+      providesTags: ["Dashboard"],
+    }),
+    getSales: build.query({
+      query: () => "sales/sales",
+      providesTags: ["Sales"],
+    }),
   }),
 });
 
@@ -105,5 +110,6 @@ export const {
   useUpdateActionMutation, // Export the updateAction mutation hook
   useDeleteCustomerMutation, // Export the deleteCustomer mutation hook
   //   useGetUserPerformanceQuery,
-  //   useGetDashboardQuery,
+  useGetDashboardQuery,
+  useGetSalesQuery,
 } = api;

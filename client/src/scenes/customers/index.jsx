@@ -89,7 +89,8 @@ export default function Customers() {
         customerObj,
       });
       // Handle success response
-      console.log("Customer added:", response);
+      console.log("Customer added:", response.data);
+      //setRows([...rows, response.data]);
     } catch (error) {
       // Handle error
       console.error("Error adding customer:", error);
