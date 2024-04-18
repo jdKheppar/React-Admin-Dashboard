@@ -6,7 +6,6 @@ import Header from "components/Header";
 import DataGridCustomToolbar from "components/DataGridCustomToolbar";
 
 import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/DeleteOutlined";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Close";
 import {
@@ -15,22 +14,17 @@ import {
   GridActionsCellItem,
   GridRowEditStopReasons,
 } from "@mui/x-data-grid";
-import {
-  randomCreatedDate,
-  randomTraderName,
-  randomId,
-} from "@mui/x-data-grid-generator";
+import { useUpdateActionMutation } from "state/api"; // Adjust the import path as needed
 
 const Actions = () => {
   const theme = useTheme();
 
-  // values to be sent to the backend
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
   const [sort, setSort] = useState({});
   const [search, setSearch] = useState("");
-
   const [searchInput, setSearchInput] = useState("");
+
   const { data, isLoading } = useGetActionsQuery({
     page,
     pageSize,
@@ -39,13 +33,26 @@ const Actions = () => {
   });
 
   const [rows, setRows] = React.useState([]);
+  const [rowModesModel, setRowModesModel] = React.useState({});
 
   React.useEffect(() => {
     if (data) {
       setRows(data);
     }
   }, [data]);
-  const [rowModesModel, setRowModesModel] = React.useState({});
+  const [updateActionMutation] = useUpdateActionMutation();
+  const updateBackend = async (actionObj) => {
+    try {
+      const response = await updateActionMutation({
+        actionObj,
+      });
+      // Handle success response
+      console.log("Action updated:", response.data);
+    } catch (error) {
+      // Handle error
+      console.error("Error updating action:", error);
+    }
+  };
 
   const handleRowEditStop = (params, event) => {
     if (params.reason === GridRowEditStopReasons.rowFocusOut) {
@@ -61,25 +68,33 @@ const Actions = () => {
     setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
   };
 
-  const handleDeleteClick = (id) => () => {
-    setRows(rows.filter((row) => row._id !== id));
-  };
-
   const handleCancelClick = (id) => () => {
     setRowModesModel({
       ...rowModesModel,
       [id]: { mode: GridRowModes.View, ignoreModifications: true },
     });
 
-    const editedRow = rows.find((row) => row._id === id);
-    if (editedRow.isNew) {
-      setRows(rows.filter((row) => row._id !== id));
+    if (rows.length > 0) {
+      const editedRow = rows.find((row) => row._id === id);
+      if (editedRow && editedRow.isNew) {
+        setRows(rows.filter((row) => row._id !== id));
+      }
     }
   };
 
   const processRowUpdate = (newRow) => {
     const updatedRow = { ...newRow, isNew: false };
+    let actionObj = {
+      actionId: newRow._id,
+      updatedActionData: newRow,
+    };
+    updateBackend(actionObj);
     setRows(rows.map((row) => (row._id === newRow._id ? updatedRow : row)));
+    setRowModesModel({
+      ...rowModesModel,
+      [newRow._id]: { mode: GridRowModes.View },
+    });
+
     return updatedRow;
   };
 
@@ -148,12 +163,6 @@ const Actions = () => {
             onClick={handleEditClick(id)}
             color="inherit"
           />,
-          <GridActionsCellItem
-            icon={<DeleteIcon />}
-            label="Delete"
-            onClick={handleDeleteClick(id)}
-            color="inherit"
-          />,
         ];
       },
     },
@@ -204,9 +213,19 @@ const Actions = () => {
           onPageChange={(newPage) => setPage(newPage)}
           onPageSizeChange={(newPageSize) => setPageSize(newPageSize)}
           onSortModelChange={(newSortModel) => setSort(...newSortModel)}
+          editMode="row"
+          rowModesModel={rowModesModel}
+          onRowModesModelChange={handleRowModesModelChange}
+          onRowEditStop={handleRowEditStop}
           components={{ Toolbar: DataGridCustomToolbar }}
           componentsProps={{
             toolbar: { searchInput, setSearchInput, setSearch },
+          }}
+          processRowUpdate={processRowUpdate}
+          experimentalFeatures={{ newEditingApi: true }}
+          onProcessRowUpdateError={(error) => {
+            // Handle the error here
+            console.error("Error during row update:", error);
           }}
         />
       </Box>

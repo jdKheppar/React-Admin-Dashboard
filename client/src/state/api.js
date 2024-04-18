@@ -8,48 +8,48 @@ export const api = createApi({
     "Customers",
     "Client",
     "Actions",
-     "Admins",
-//     "Performance",
-//     "Dashboard",
-   ],
-   endpoints: (build) => ({
-     getUser: build.query({
-       query: (id) => `general/user/${id}`,
-       providesTags: ["User"]
-     }),
-     getClient: build.query({
+    "Admins",
+    //     "Performance",
+    //     "Dashboard",
+  ],
+  endpoints: (build) => ({
+    getUser: build.query({
+      query: (id) => `general/user/${id}`,
+      providesTags: ["User"],
+    }),
+    getClient: build.query({
       query: (id) => `general/client/${id}`,
-      providesTags: ["Client"]
+      providesTags: ["Client"],
     }),
-//     getProducts: build.query({
-//       query: () => "client/products",
-//       providesTags: ["Products"],
-//     }),
- getCustomers: build.query({
-   query: () => "client/customers",
-   providesTags: ["Customers"],
- }),
-getActions: build.query({
-   query: ({ page, pageSize, sort, search }) => ({
-      url: "client/actions",
-      method: "GET",
-      params: { page, pageSize, sort, search },
+    //     getProducts: build.query({
+    //       query: () => "client/products",
+    //       providesTags: ["Products"],
+    //     }),
+    getCustomers: build.query({
+      query: () => "client/customers",
+      providesTags: ["Customers"],
     }),
-    providesTags: ["Actions"],
-  }),
-//     getGeography: build.query({
-//       query: () => "client/geography",
-//       providesTags: ["Geography"],
-//     }),
-     getSales: build.query({
-       query: () => "requests/requests",
-       providesTags: ["Requests"],
-     }),
-getAdmins: build.query({
-       query: () => "management/admins",
-       providesTags: ["Admins"],
-     }),
-     addCustomer: build.mutation({
+    getActions: build.query({
+      query: ({ page, pageSize, sort, search }) => ({
+        url: "client/actions",
+        method: "GET",
+        params: { page, pageSize, sort, search },
+      }),
+      providesTags: ["Actions"],
+    }),
+    //     getGeography: build.query({
+    //       query: () => "client/geography",
+    //       providesTags: ["Geography"],
+    //     }),
+    getSales: build.query({
+      query: () => "requests/requests",
+      providesTags: ["Requests"],
+    }),
+    getAdmins: build.query({
+      query: () => "management/admins",
+      providesTags: ["Admins"],
+    }),
+    addCustomer: build.mutation({
       query: (customerObj) => ({
         url: "client/customers/add",
         method: "POST",
@@ -58,18 +58,18 @@ getAdmins: build.query({
       invalidatesTags: ["Customers"],
     }),
     updateCustomer: build.mutation({
-      query: ({ id, updatedCustomerData }) => ({
-        url: `client/customers/update/${id}`,
+      query: ({ customerObj }) => ({
+        url: "client/customers/update",
         method: "PUT",
-        body: updatedCustomerData,
+        body: customerObj,
       }),
       invalidatesTags: ["Customers"],
     }),
     updateAction: build.mutation({
-      query: ({ id, updatedActionData }) => ({
-        url: `client/actions/add/${id}`,
+      query: ({ actionObj }) => ({
+        url: "client/actions/update",
         method: "PUT",
-        body: updatedActionData,
+        body: actionObj,
       }),
       invalidatesTags: ["Actions"],
     }),
@@ -80,26 +80,30 @@ getAdmins: build.query({
       }),
       invalidatesTags: ["Customers"],
     }),
-//     getUserPerformance: build.query({
-//       query: (id) => `management/performance/${id}`,
-//       providesTags: ["Performance"],
-//     }),
-//     getDashboard: build.query({
-//       query: () => "general/dashboard",
-//       providesTags: ["Dashboard"],
-//     }),
-   }),
- });
+    //     getUserPerformance: build.query({
+    //       query: (id) => `management/performance/${id}`,
+    //       providesTags: ["Performance"],
+    //     }),
+    //     getDashboard: build.query({
+    //       query: () => "general/dashboard",
+    //       providesTags: ["Dashboard"],
+    //     }),
+  }),
+});
 
- export const {
-   useGetUserQuery,
-//   useGetProductsQuery,
-   useGetClientQuery,
-   useGetCustomersQuery,
-   useGetActionsQuery,
-//   useGetGeographyQuery,
-   useGetRequestsQuery,
-   useGetAdminsQuery,
-//   useGetUserPerformanceQuery,
-//   useGetDashboardQuery,
+export const {
+  useGetUserQuery,
+  //   useGetProductsQuery,
+  useGetClientQuery,
+  useGetCustomersQuery,
+  useGetActionsQuery,
+  //   useGetGeographyQuery,
+  useGetRequestsQuery,
+  useGetAdminsQuery,
+  useAddCustomerMutation, // Export the addCustomer mutation hook
+  useUpdateCustomerMutation, // Export the updateCustomer mutation hook
+  useUpdateActionMutation, // Export the updateAction mutation hook
+  useDeleteCustomerMutation, // Export the deleteCustomer mutation hook
+  //   useGetUserPerformanceQuery,
+  //   useGetDashboardQuery,
 } = api;

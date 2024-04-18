@@ -1,18 +1,23 @@
 import Client from "../models/Customer.js";
 import User from "../models/User.js";
 import Action from "../models/Action.js";
+import mongoose from "mongoose";
 
 export const getCustomers = async (req, res) => {
   try {
-    const customers = await Client.find({ role: "customer" }).select("-supporting_document");
+    const customers = await Client.find({ role: "customer" }).select(
+      "-supporting_document"
+    );
     res.status(200).json(customers);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
-};  
+};
 export const addCustomer = async (req, res) => {
-  const customerObj = req.body; // the request body contains all fields for the new customer
+  const { customerObj } = req.body; // the request body contains all fields for the new customer
+  console.log(req.body);
   try {
+    delete customerObj._id;
     // Create a new instance of the Client model with the customer data
     const newCustomer = new Client(customerObj);
 
@@ -22,12 +27,13 @@ export const addCustomer = async (req, res) => {
     // Returning the newly created customer in the response
     res.status(201).json(newCustomer);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
 export const updateCustomer = async (req, res) => {
-  const customerId = req.params.id; // Extract the customer ID from the request parameters
-  const updatedCustomerData = req.body; // Extract the updated customer data from the request body
+  console.log(req.body);
+  const { customerId, updatedCustomerData } = req.body; // Extract the updated customer data from the request body
 
   try {
     // Find the customer by ID in the database
@@ -46,13 +52,20 @@ export const updateCustomer = async (req, res) => {
     // Return the updated customer in the response
     res.status(200).json(customer);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
 export const removeCustomer = async (req, res) => {
-  const customerId = req.params.id; // Extract the customer ID from the request parameters
+  console.log(req.params.id);
+  let customerId = req.params.id; // Extract the customer ID from the request parameters
 
   try {
+    // Convert the string ID to a MongoDB ObjectId
+
+    if (!mongoose.Types.ObjectId.isValid(customerId)) {
+      return res.status(400).json({ message: "Invalid customer ID" });
+    }
     // Find the customer by ID in the database
     const customer = await Client.findById(customerId);
 
@@ -60,12 +73,16 @@ export const removeCustomer = async (req, res) => {
       return res.status(404).json({ message: "Customer not found" });
     }
 
-    // Remove the customer from the database
-    await customer.remove();
+    // Delete the customer from the database
+    const deleteResult = await Client.deleteOne({ _id: customerId });
 
+    if (deleteResult.deletedCount === 0) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
     // Return a success message in the response
     res.status(200).json({ message: "Customer deleted successfully" });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ message: error.message });
   }
 };
@@ -87,10 +104,7 @@ export const getActions = async (req, res) => {
     const sortFormatted = Boolean(sort) ? generateSort() : {};
 
     const actions = await Action.find({
-      $or: [
-        
-        { userId: { $regex: new RegExp(search, "i") } },
-      ],
+      $or: [{ userId: { $regex: new RegExp(search, "i") } }],
     })
       .sort(sortFormatted)
       .skip(page * pageSize)
@@ -110,8 +124,8 @@ export const getActions = async (req, res) => {
 };
 
 export const updateAction = async (req, res) => {
-  const actionId = req.params.id; // Extract the action ID from the request parameters
-  const updatedActionData = req.body; // Extract the updated action data from the request body
+  console.log(req.body);
+  const { actionId, updatedActionData } = req.body; // Extract the updated action data from the request body
 
   try {
     // Find the action by ID in the database

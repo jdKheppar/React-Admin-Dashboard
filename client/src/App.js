@@ -10,7 +10,6 @@ import Customers from "scenes/customers";
 import Actions from "scenes/actions";
 import Admin from "scenes/admin";
 import Overview from "scenes/overview";
-import FullFeaturedCrudGrid from "./scenes/comers";
 
 function App() {
   const mode = useSelector((state) => state.global.mode);
@@ -25,7 +24,6 @@ function App() {
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/customers" element={<Customers />} />
-              <Route path="/comers" element={<FullFeaturedCrudGrid />} />
               <Route path="/actions" element={<Actions />} />
               <Route path="/overview" element={<Overview />} />
               <Route path="/admin" element={<Admin />} />
