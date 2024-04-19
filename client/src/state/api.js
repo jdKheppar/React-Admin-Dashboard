@@ -42,10 +42,10 @@ export const api = createApi({
     //       query: () => "client/geography",
     //       providesTags: ["Geography"],
     //     }),
-    getSales: build.query({
-      query: () => "requests/requests",
-      providesTags: ["Requests"],
-    }),
+    // getSales: build.query({
+    //   query: () => "requests/requests",
+    //   providesTags: ["Requests"],
+    // }),
     getAdmins: build.query({
       query: () => "management/admins",
       providesTags: ["Admins"],

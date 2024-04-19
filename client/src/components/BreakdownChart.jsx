@@ -5,9 +5,10 @@ import { useGetSalesQuery } from "state/api";
 
 const BreakdownChart = ({ isDashboard = false }) => {
   const { data, isLoading } = useGetSalesQuery();
+  console.log("data in Breakdownchart is:", data);
   const theme = useTheme();
 
-  if (!data || isLoading) return "Loading...";
+  if (!data || isLoading || !data.salesByCategory) return "Loading...";
 
   const colors = [
     theme.palette.secondary[500],

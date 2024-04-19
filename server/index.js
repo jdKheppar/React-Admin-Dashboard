@@ -11,23 +11,26 @@ import managementRoutes from "./routes/management.js";
 import Action from "./models/Action.js";
 import salesRoutes from "./routes/sales.js";
 import OverallStat from "./models/OverallStat.js";
+import Transaction from "./models/Transaction.js";
 
 import User from "./models/User.js";
 import Client from "./models/Customer.js";
 
-// import {Customer} from "./data/index.js";
+//import {Customer} from "./data/index.js";
 
-/* data imports
+//data imports
 import Product from "./models/Product.js";
 import ProductStat from "./models/ProductStat.js";
 import AffiliateStat from "./models/AffiliateStat.js";
-/*
+
 /* CONFIGURATION */
 import {
   dataUser,
-  dataCustomer,
-  dataAction,
+  dataProduct,
+  dataProductStat,
+  dataTransaction,
   dataOverallStat,
+  dataAffiliateStat,
 } from "./data/index.js";
 
 dotenv.config();
@@ -61,8 +64,9 @@ mongoose
     // OverallStat.insertMany(dataOverallStat);
     // Product.insertMany(dataProduct);
     // ProductStat.insertMany(dataProductStat);
-    Action.insertMany(dataAction);
-    // Client.insertMany(dataCustomer);
+    //Action.insertMany(dataAction);
+    //Client.insertMany(dataCustomer);
+    // Transaction.insertMany(dataTransaction);
     // User.insertMany(dataUser);
   })
   .catch((error) => console.log(`${error} did not connect`));
